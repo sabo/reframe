@@ -38,6 +38,7 @@ def _emit_gitlab_pipeline(testcases):
             f'-R' if recurse else '',
             f'--report-file={report_file}',
             f'--restore-session={restore_file}' if restore_file else '',
+            '${REFRAME_ADDL_OPTS}',
             '-n', testcase.check.name, '-r'
         ])
 
