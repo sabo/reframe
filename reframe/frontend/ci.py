@@ -55,7 +55,7 @@ def _emit_gitlab_pipeline(testcases):
             'stage': f'rfm-stage-{tc.level}',
             'script': [rfm_command(tc)],
             'artifacts': {
-                'paths': [f'{tc.check.name}-report.json' for t in tc.deps]
+                'paths': [f'{tc.check.name}-report.json']
             },
             'needs': [t.check.name for t in tc.deps]
         }
