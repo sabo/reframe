@@ -61,7 +61,7 @@ def _emit_gitlab_pipeline(testcases):
             },
             'needs': [t.check.name for t in tc.deps]
         }
-        json[f'{tc.check.name}'].update(tc.ci_config)
+        json[f'{tc.check.name}'].update(tc.check.ci_config)
         max_level = max(max_level, tc.level)
 
     json['stages'] = [f'rfm-stage-{m}' for m in range(max_level+1)]
