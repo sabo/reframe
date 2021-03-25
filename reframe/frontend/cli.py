@@ -626,14 +626,15 @@ def main():
     if options.restore_session is not None:
         # We need to load the failed checks only from a list of reports
         if options.restore_session:
-            filenames = options.restore_session.split(',')
+            filename = options.restore_session
         else:
-            filenames = [runreport.next_report_filename(
+            filename = runreport.next_report_filename(
                 osext.expandvars(site_config.get('general/0/report_file')),
                 new=False
             )]
 
         report = runreport.load_report(*filenames)
+
         check_search_path = list(report.slice('filename', unique=True))
         check_search_recursive = False
 
