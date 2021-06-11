@@ -33,6 +33,12 @@ def _emit_gitlab_pipeline(testcases):
         else:
             restore_files = None
 
+        if getattr(testcase.check, 'junit', False) is True:
+            junit = True
+            junit_file = f'{testcase.check.name}-junit.xml'
+        else:
+            junit = False
+
         return ' '.join([
             program,
             f'--prefix={prefix}', config_opt,
@@ -40,6 +46,7 @@ def _emit_gitlab_pipeline(testcases):
             f'-R' if recurse else '',
             f'--report-file={report_file}',
             f'--restore-session={restore_files}' if restore_files else '',
+            f'--report-junit={junit_file}' if junit else '',
             '${REFRAME_ADDL_OPTS}',
             '-n', testcase.check.name, '-r'
         ])
@@ -53,6 +60,13 @@ def _emit_gitlab_pipeline(testcases):
         'stages': []
     }
     for tc in testcases:
+        if getattr(tc.check, 'junit', False) is True:
+            junit = True
+            junit_file = f'{tc.check.name}-junit.xml'
+        else:
+            junit = False
+            junit_file = None
+
         json[f'{tc.check.name}'] = {
             'stage': f'rfm-stage-{tc.level}',
             'script': [rfm_command(tc)],
@@ -61,6 +75,9 @@ def _emit_gitlab_pipeline(testcases):
             },
             'needs': [t.check.name for t in tc.deps]
         }
+        if junit:
+            json[f'{tc.check.name}']['artifacts']['reports'] = {'junit': junit_file}
+
         json[f'{tc.check.name}'].update(tc.check.ci_config)
         max_level = max(max_level, tc.level)
 
